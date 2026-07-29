@@ -1,12 +1,20 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { LineChart, Sparkles } from "lucide-react";
+import { ChevronRight, LineChart, Sparkles, Table2 } from "lucide-react";
 import { useCallback, useMemo, useRef, useState } from "react";
 import { CitationDrawer } from "@/components/dashboard/CitationDrawer";
 import { EvidenceTable } from "@/components/dashboard/EvidenceTable";
 import { FilterSidebar } from "@/components/dashboard/FilterSidebar";
 import { LongFormView, SummaryView } from "@/components/dashboard/SummaryPanel";
 import { Badge } from "@/components/ui/badge";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
 import { customerById, productById, sourceById } from "@/data/feedback";
 import { useDashboardFilters, useSchedules } from "@/hooks/useDashboard";
 import { buildRollup, describeScope, filterFeedback } from "@/lib/analytics";
