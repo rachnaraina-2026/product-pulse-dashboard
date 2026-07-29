@@ -192,13 +192,41 @@ function Dashboard() {
         </section>
 
         <section aria-label="Categorized feedback">
-          <EvidenceTable
-            items={items}
-            filters={filters}
-            toggleIn={toggleIn}
-            onSelect={setSelected}
-          />
+          <Sheet>
+            <SheetTrigger asChild>
+              <button
+                type="button"
+                className="flex w-full items-center justify-between gap-3 rounded-xl border bg-card p-4 text-left shadow-card transition-colors hover:bg-accent"
+              >
+                <span className="flex items-center gap-2 text-sm font-semibold">
+                  <Table2 className="h-4 w-4 text-primary" />
+                  Categorized feedback
+                  <Badge variant="outline" className="font-normal">
+                    {items.length} items
+                  </Badge>
+                </span>
+                <span className="flex items-center gap-1 text-xs text-muted-foreground">
+                  Open evidence
+                  <ChevronRight className="h-3.5 w-3.5" />
+                </span>
+              </button>
+            </SheetTrigger>
+            <SheetContent side="right" className="w-full overflow-y-auto sm:max-w-5xl">
+              <SheetHeader>
+                <SheetTitle>Categorized feedback</SheetTitle>
+              </SheetHeader>
+              <div className="p-4 pt-0">
+                <EvidenceTable
+                  items={items}
+                  filters={filters}
+                  toggleIn={toggleIn}
+                  onSelect={setSelected}
+                />
+              </div>
+            </SheetContent>
+          </Sheet>
         </section>
+
       </main>
 
       <CitationDrawer item={selected} onOpenChange={(open) => !open && setSelected(null)} />
