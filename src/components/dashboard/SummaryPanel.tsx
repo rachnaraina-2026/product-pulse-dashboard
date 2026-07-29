@@ -1,8 +1,15 @@
-import { AlertTriangle, ShieldAlert, Sparkles, TrendingUp, Users } from "lucide-react";
+import { AlertTriangle, ChevronRight, ShieldAlert, Sparkles, TrendingUp, Users } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import { Skeleton } from "@/components/ui/skeleton";
+
 import type { SummaryRollup } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
