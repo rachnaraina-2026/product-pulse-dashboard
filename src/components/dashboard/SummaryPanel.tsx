@@ -258,12 +258,19 @@ function Markdown({ text }: { text: string }) {
       {lines.map((line, i) => {
         const trimmed = line.trim();
         if (!trimmed) return <div key={i} className="h-2" />;
+        if (trimmed.startsWith("### "))
+          return (
+            <h4 key={i} className="pt-3 font-display text-sm font-semibold text-primary">
+              {trimmed.slice(4)}
+            </h4>
+          );
         if (trimmed.startsWith("## "))
           return (
             <h3 key={i} className="pt-4 font-display text-lg font-semibold">
               {trimmed.slice(3)}
             </h3>
           );
+
         if (trimmed.startsWith("# "))
           return (
             <h2 key={i} className="pt-3 font-display text-xl font-semibold">
