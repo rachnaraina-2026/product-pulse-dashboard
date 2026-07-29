@@ -1,8 +1,15 @@
-import { AlertTriangle, ShieldAlert, Sparkles, TrendingUp, Users } from "lucide-react";
+import { AlertTriangle, ChevronRight, ShieldAlert, Sparkles, TrendingUp, Users } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import { Skeleton } from "@/components/ui/skeleton";
+
 import type { SummaryRollup } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
@@ -145,49 +152,70 @@ export function SummaryView({ rollup }: { rollup: SummaryRollup }) {
         </Card>
       </div>
 
-      <Card className="border-critical/30 shadow-card">
-        <CardHeader className="pb-3">
-          <CardTitle className="flex items-center gap-2 text-base">
-            <ShieldAlert className="h-4 w-4 text-critical" />
-            Needs immediate attention
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="grid gap-3 md:grid-cols-2">
-          {rollup.callouts.map((c, i) => (
-            <div
-              key={`${c.title}-${i}`}
-              className={cn(
-                "rounded-lg border p-3",
-                c.severity === "critical"
-                  ? "border-critical/40 bg-critical/5"
-                  : "border-warning/40 bg-warning/10",
-              )}
-            >
-              <div className="flex items-center justify-between gap-2">
-                <p className="text-sm font-semibold">{c.customer}</p>
-                <Badge
-                  variant="outline"
-                  className={cn(
-                    "font-normal",
-                    c.severity === "critical"
-                      ? "border-critical/50 text-critical"
-                      : "border-warning/60 text-warning-foreground",
-                  )}
-                >
-                  {c.severity === "critical" ? "High churn risk" : "Security"}
-                </Badge>
+      <Sheet>
+        <SheetTrigger asChild>
+          <button
+            type="button"
+            className="flex w-full items-center justify-between gap-3 rounded-xl border border-critical/30 bg-critical/5 p-4 text-left transition-colors hover:bg-critical/10"
+          >
+            <span className="flex items-center gap-2 text-sm font-semibold">
+              <ShieldAlert className="h-4 w-4 text-critical" />
+              Needs immediate attention
+              <Badge variant="outline" className="border-critical/50 font-normal text-critical">
+                {rollup.callouts.length}
+              </Badge>
+            </span>
+            <span className="flex items-center gap-1 text-xs text-muted-foreground">
+              View details
+              <ChevronRight className="h-3.5 w-3.5" />
+            </span>
+          </button>
+        </SheetTrigger>
+        <SheetContent side="right" className="w-full overflow-y-auto sm:max-w-xl">
+          <SheetHeader>
+            <SheetTitle className="flex items-center gap-2">
+              <ShieldAlert className="h-4 w-4 text-critical" />
+              Needs immediate attention
+            </SheetTitle>
+          </SheetHeader>
+          <div className="grid gap-3 p-4 pt-0">
+            {rollup.callouts.map((c, i) => (
+              <div
+                key={`${c.title}-${i}`}
+                className={cn(
+                  "rounded-lg border p-3",
+                  c.severity === "critical"
+                    ? "border-critical/40 bg-critical/5"
+                    : "border-warning/40 bg-warning/10",
+                )}
+              >
+                <div className="flex items-center justify-between gap-2">
+                  <p className="text-sm font-semibold">{c.customer}</p>
+                  <Badge
+                    variant="outline"
+                    className={cn(
+                      "font-normal",
+                      c.severity === "critical"
+                        ? "border-critical/50 text-critical"
+                        : "border-warning/60 text-warning-foreground",
+                    )}
+                  >
+                    {c.severity === "critical" ? "High churn risk" : "Security"}
+                  </Badge>
+                </div>
+                <p className="mt-1 text-sm font-medium">{c.title}</p>
+                <p className="mt-1 text-xs text-muted-foreground">{c.detail}</p>
               </div>
-              <p className="mt-1 text-sm font-medium">{c.title}</p>
-              <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">{c.detail}</p>
-            </div>
-          ))}
-          {rollup.callouts.length === 0 && (
-            <p className="text-sm text-muted-foreground">
-              No urgent churn or security signals in this scope.
-            </p>
-          )}
-        </CardContent>
-      </Card>
+            ))}
+            {rollup.callouts.length === 0 && (
+              <p className="text-sm text-muted-foreground">
+                No urgent churn or security signals in this scope.
+              </p>
+            )}
+          </div>
+        </SheetContent>
+      </Sheet>
+
     </div>
   );
 }

@@ -3,7 +3,16 @@ import { useState } from "react";
 import { MultiSelect, type MultiOption } from "@/components/dashboard/MultiSelect";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -163,115 +172,136 @@ export function FilterSidebar({
 
       <Separator />
 
-      <section className="space-y-3">
-        <div className="flex items-center gap-2 text-sm font-semibold">
-          <CalendarClock className="h-4 w-4 text-primary" />
-          Report cadence
-        </div>
+      <Dialog>
+        <DialogTrigger asChild>
+          <Button variant="outline" className="w-full justify-between bg-card">
+            <span className="flex items-center gap-2">
+              <CalendarClock className="h-4 w-4 text-primary" />
+              Report cadence
+            </span>
+            <Badge variant="secondary" className="font-normal">
+              {schedules.length ? `${schedules.length} scheduled` : "On demand"}
+            </Badge>
+          </Button>
+        </DialogTrigger>
+        <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <CalendarClock className="h-4 w-4 text-primary" />
+              Report cadence
+            </DialogTitle>
+            <DialogDescription>
+              Schedule this synthesis to run automatically for the current scope.
+            </DialogDescription>
+          </DialogHeader>
 
-        <Select value={cadence} onValueChange={(v) => setCadence(v as Cadence)}>
-          <SelectTrigger className="bg-card">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="off">Off — on demand only</SelectItem>
-            <SelectItem value="weekly">Weekly</SelectItem>
-            <SelectItem value="monthly">Monthly</SelectItem>
-            <SelectItem value="custom">Every N days</SelectItem>
-          </SelectContent>
-        </Select>
+          <div className="space-y-3">
+            <Select value={cadence} onValueChange={(v) => setCadence(v as Cadence)}>
+              <SelectTrigger className="bg-card">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="off">Off — on demand only</SelectItem>
+                <SelectItem value="weekly">Weekly</SelectItem>
+                <SelectItem value="monthly">Monthly</SelectItem>
+                <SelectItem value="custom">Every N days</SelectItem>
+              </SelectContent>
+            </Select>
 
-        {cadence === "weekly" && (
-          <Select value={String(weekday)} onValueChange={(v) => setWeekday(Number(v))}>
-            <SelectTrigger className="bg-card">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {weekdayNames.map((d, i) => (
-                <SelectItem key={d} value={String(i)}>
-                  Every {d}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        )}
+            {cadence === "weekly" && (
+              <Select value={String(weekday)} onValueChange={(v) => setWeekday(Number(v))}>
+                <SelectTrigger className="bg-card">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {weekdayNames.map((d, i) => (
+                    <SelectItem key={d} value={String(i)}>
+                      Every {d}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
 
-        {cadence === "monthly" && (
-          <Select value={String(dayOfMonth)} onValueChange={(v) => setDayOfMonth(Number(v))}>
-            <SelectTrigger className="bg-card">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {Array.from({ length: 28 }, (_, i) => i + 1).map((d) => (
-                <SelectItem key={d} value={String(d)}>
-                  Day {d} of the month
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        )}
+            {cadence === "monthly" && (
+              <Select value={String(dayOfMonth)} onValueChange={(v) => setDayOfMonth(Number(v))}>
+                <SelectTrigger className="bg-card">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {Array.from({ length: 28 }, (_, i) => i + 1).map((d) => (
+                    <SelectItem key={d} value={String(d)}>
+                      Day {d} of the month
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
 
-        {cadence === "custom" && (
-          <Input
-            type="number"
-            min={1}
-            max={90}
-            value={everyNDays}
-            onChange={(e) => setEveryNDays(Number(e.target.value))}
-            className="bg-card"
-          />
-        )}
+            {cadence === "custom" && (
+              <Input
+                type="number"
+                min={1}
+                max={90}
+                value={everyNDays}
+                onChange={(e) => setEveryNDays(Number(e.target.value))}
+                className="bg-card"
+              />
+            )}
 
-        {cadence !== "off" && (
-          <div className="flex items-center gap-2">
-            <Input
-              type="time"
-              value={time}
-              onChange={(e) => setTime(e.target.value)}
-              className="h-9 bg-card"
-            />
-            <Button
-              size="sm"
-              variant="secondary"
-              className="shrink-0"
-              onClick={() =>
-                addSchedule({ cadence, weekday, dayOfMonth, everyNDays, time, enabled: true })
-              }
-            >
-              Save schedule
-            </Button>
+            {cadence !== "off" && (
+              <div className="flex items-center gap-2">
+                <Input
+                  type="time"
+                  value={time}
+                  onChange={(e) => setTime(e.target.value)}
+                  className="h-9 bg-card"
+                />
+                <Button
+                  size="sm"
+                  variant="secondary"
+                  className="shrink-0"
+                  onClick={() =>
+                    addSchedule({ cadence, weekday, dayOfMonth, everyNDays, time, enabled: true })
+                  }
+                >
+                  Save schedule
+                </Button>
+              </div>
+            )}
+
+            {schedules.length > 0 && (
+              <ul className="space-y-2">
+                {schedules.map((s) => (
+                  <li key={s.id} className="rounded-lg border bg-card p-3 shadow-card">
+                    <div className="flex items-start justify-between gap-2">
+                      <div>
+                        <p className="text-sm font-medium">{describeSchedule(s)}</p>
+                        <p className="text-[11px] text-muted-foreground">
+                          Next run {s.enabled ? nextRunLabel(s) : "— paused"}
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Switch checked={s.enabled} onCheckedChange={() => toggleSchedule(s.id)} />
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-7 w-7"
+                          onClick={() => removeSchedule(s.id)}
+                          aria-label="Delete schedule"
+                        >
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </Button>
+                      </div>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
-        )}
+        </DialogContent>
+      </Dialog>
 
-        {schedules.length > 0 && (
-          <ul className="space-y-2">
-            {schedules.map((s) => (
-              <li key={s.id} className="rounded-lg border bg-card p-3 shadow-card">
-                <div className="flex items-start justify-between gap-2">
-                  <div>
-                    <p className="text-sm font-medium">{describeSchedule(s)}</p>
-                    <p className="text-[11px] text-muted-foreground">
-                      Next run {s.enabled ? nextRunLabel(s) : "— paused"}
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <Switch checked={s.enabled} onCheckedChange={() => toggleSchedule(s.id)} />
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-7 w-7"
-                      onClick={() => removeSchedule(s.id)}
-                      aria-label="Delete schedule"
-                    >
-                      <Trash2 className="h-3.5 w-3.5" />
-                    </Button>
-                  </div>
-                </div>
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
 
       <div className="mt-auto space-y-2 pt-2">
         <Button className="w-full gap-2" onClick={onRun} disabled={running}>
